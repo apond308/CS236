@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "235 g++ launch",
+            "name": "GDB",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/run",
+            "program": "${workspaceFolder}/run",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
