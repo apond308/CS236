@@ -18,6 +18,11 @@ public:
 
     Parser(vector<Token> token_list);
 
+    vector<Predicate> getSchemeList(){return scheme_list;}
+    vector<Predicate> getFactList(){return fact_list;}
+    vector<Rule> getRuleList(){return rule_list;}
+    vector<Predicate> getQueryList(){return query_list;}
+
     void throwError(Token error_token);
 
     void parse();

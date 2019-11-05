@@ -1,22 +1,17 @@
-# For use ONLY during the Fall 2019 semester
-# Copyright Cory Barker, Brigham Young University, August 2019
-
-
 Schemes:
-    add(X, Y, Z)
-    nums(A, B)
-    
-Facts: #comment
-    add('1', '2', '3').
-    add('2','4','5').
-    nums('2', '3').
-    nums('6', '7').
-    nums('2', '6').
+	SK(A,B)
+
+Facts:
+	SK('a','c').
+	SK('b','c').
+	SK('b','b').
+	SK('b','c').
+	
 Rules:
-    add(X,Y,Z) :- nums(X,Y), add(X,Y,((X+Y)Z)).
-    
+
 Queries:
-    add('2','3','5')?
-    add(X,Y,'13')?
-    nums(X,('3'*('4'+(X * '-1'))))?
- 
+	SK(A,'c')?
+	SK('b','c')?
+	SK(X,X)?
+	SK(A,B)?
+	SK('c','c')?
