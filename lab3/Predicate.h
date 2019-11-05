@@ -6,6 +6,7 @@ using namespace std;
 #include <vector>
 
 #include "Parameter.h"
+#include "Tuple.h"
 
 class Predicate
 {
@@ -18,11 +19,11 @@ public:
 
     string toString(char terminator=0);
 
-private:
-
     string name;
 
     vector<Parameter> parameter_list;
+
+    Tuple getParameters();
 
 };
 

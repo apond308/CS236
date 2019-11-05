@@ -9,9 +9,10 @@ class Tuple : public vector<string>
 {
 public:
 
+    void addElement(string to_add);
 
 private:
-
+    
 
 };
 

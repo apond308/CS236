@@ -10,7 +10,6 @@ class Scheme : public vector<string>
 private:
 
 public:
-    Scheme();
 
 };
 

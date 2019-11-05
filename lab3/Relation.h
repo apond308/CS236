@@ -9,6 +9,7 @@ using namespace std;
 
 class Relation
 {
+
 public:
 
     Relation(string name_in, Scheme scheme_in);
@@ -16,13 +17,13 @@ public:
     void addTouple(Tuple to_add);
 
     string toString();
+    
+    string name;
 
 private:
 
-    string name;
     Scheme scheme;
     set<Tuple> tuple_list;
-
 
 };
 

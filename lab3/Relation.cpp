@@ -9,19 +9,17 @@ Relation::Relation(string name_in, Scheme scheme_in)
 
 void Relation::addTouple(Tuple to_add)
 {
-
+    tuple_list.insert(to_add);
 }
 
 string Relation::toString()
 {
     string temp_string = "";
-    set<Tuple>::iterator iter = tuple_list.begin();
-    while(iter != tuple_list.end())
-    {
-        for (int x=0;x<this->scheme.size();x++)
-        {    
+    for(set<Tuple>::iterator iter = tuple_list.begin(); iter != tuple_list.end(); iter++){
+        for (int x=0;x<this->scheme.size();x++){    
             temp_string += this->scheme[x] + "=" + (*iter)[x] + ",";
-            cout << temp_string << endl;
         }
     }
+    temp_string = temp_string.substr(0, temp_string.size()-1);
+    return temp_string;
 }

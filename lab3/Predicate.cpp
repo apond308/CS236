@@ -25,3 +25,13 @@ string Predicate::toString(char terminator)
         output += terminator;
     return output;
 }
+
+Tuple Predicate::getParameters()
+{
+    Tuple parameter_strings;
+    for (int x=0;x<parameter_list.size();x++)
+    {
+        parameter_strings.push_back(parameter_list[x].toString());
+    }
+    return parameter_strings;
+}
