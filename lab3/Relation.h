@@ -14,13 +14,11 @@ public:
 
     Relation(string name_in, Scheme scheme_in);
 
-    void addTouple(Tuple to_add);
+    void addTuple(Tuple to_add);
 
     string toString();
     
     string name;
-
-private:
 
     Scheme scheme;
     set<Tuple> tuple_list;

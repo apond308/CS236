@@ -12,11 +12,9 @@ int main()
 	vector<Token> token_list = scanner.tokenize("lab3/test_file.txt");
 	Parser parser = Parser(token_list);
 	parser.parse();
-    
-
-	parser.printLists();
 
 	Database database = Database();
-	database.createRelations(parser.getSchemeList(), parser.getFactList(),
-								parser.getRuleList(), parser.getQueryList());
+	database.createRelations(parser.getSchemeList(), parser.getFactList());
+
+	database.evaluateQueries(parser.getQueryList());
 }
