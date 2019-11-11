@@ -6,15 +6,18 @@
 #include "Scanner.h"
 
 using namespace std;
-int main()
+int main(int argc, char* argv[])
 {
+	string filename = "lab3/test_file.txt";
+	if (argc > 1)
+		filename = argv[1];
     Scanner scanner = Scanner();
-	vector<Token> token_list = scanner.tokenize("lab3/test_file.txt");
+	vector<Token> token_list = scanner.tokenize(filename);
 	Parser parser = Parser(token_list);
 	parser.parse();
 
 	Database database = Database();
-	database.createRelations(parser.getSchemeList(), parser.getFactList());
+	database.createRelations(parser.getSchemeList(), parser.getFactList(), parser.getRuleList());
 
 	database.evaluateQueries(parser.getQueryList());
 }
