@@ -18,22 +18,22 @@ void Parser::printLists()
 {
     cout << "Success!" << endl;
     cout << "Schemes(" << scheme_list.size() << "):" << endl;
-    for (int x=0;x<scheme_list.size();x++)
+    for (long unsigned int x=0;x<scheme_list.size();x++)
     {
         cout << "  " << scheme_list[x].toString() << endl;
     }
     cout << "Facts(" << fact_list.size() << "):" << endl;
-    for (int x=0;x<fact_list.size();x++)
+    for (long unsigned int x=0;x<fact_list.size();x++)
     {
         cout << "  " << fact_list[x].toString('.') << endl;
     }
     cout << "Rules(" << rule_list.size() << "):" << endl;
-    for (int x=0;x<rule_list.size();x++)
+    for (long unsigned int x=0;x<rule_list.size();x++)
     {
         cout << "  " << rule_list[x].toString() << endl;
     }
     cout << "Queries(" << query_list.size() << "):" << endl;
-    for (int x=0;x<query_list.size();x++)
+    for (long unsigned int x=0;x<query_list.size();x++)
     {
         cout << "  " << query_list[x].toString('?') << endl;
     }

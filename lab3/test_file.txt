@@ -2,18 +2,28 @@
 # Copyright Cory Barker, Brigham Young University, August 2019
 
 Schemes:
-name(a,b,c,d)
+	loves(E,F)
+	hates(C,D)
 Facts:
-name('1','1','1','1').
-name('2','1','1','1').
-name('2','2','1','1').
-name('2','2','2','1').
-name('2','2','3','3').
+	loves('bob','jane').
+	loves('jane','frankk').
+	loves('frankk','mary').
+	loves('mary','bob').
+	loves('john','john').
+	hates('bob','mary').
+	hates('mary','frankk').
+	hates('frankk','jane').
+	hates('jane','bob').
+	hates('gollum','gollum').
 Rules:
+	hates(a,b) :- hates(a,b).
 Queries:
-name(t,t,t,t)?
-name(s,s,s,'1')?
-name('2',t,s,'3')?
-name(p,p,q,r)?
-name(p,p,'1',q)?
+	loves(A,X)?
+	loves(J,J)?
+	loves('frankk','mary')?
+	loves('mary','frankk')?
+	hates(G,G)?
+	hates('jane', B)?
+	hates(M, 'frankk')?
+
 

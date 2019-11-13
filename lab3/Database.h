@@ -20,7 +20,7 @@ public:
 
     Relation select(Relation current_relation, vector<Parameter> parameter_list);
     Relation project(Relation current_relation, vector<Parameter> parameter_list);
-    Relation rename(Relation current_relation, string initial_name, int index);
+    Relation rename(Relation current_relation, string old_name, string new_name);
 
 private:
     string evaluateQuery(Predicate query);

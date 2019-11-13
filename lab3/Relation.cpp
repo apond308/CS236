@@ -17,7 +17,7 @@ string Relation::toString()
     string temp_string = "";
     for(set<Tuple>::iterator iter = tuple_list.begin(); iter != tuple_list.end(); iter++){
         if (scheme.size()) {temp_string += "\n  ";}
-        for (int x=0;x<this->scheme.size();x++){    
+        for (long unsigned int x=0;x<this->scheme.size();x++){    
             temp_string += this->scheme[x] + "=" + (*iter)[x] + ", ";
         }
         temp_string = temp_string.substr(0, temp_string.size()-2);

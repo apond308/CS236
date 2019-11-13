@@ -15,7 +15,7 @@ string Rule::toString()
     string output = "";
     output += head_predicate.toString();
     output += " :- ";
-    for (int x=0;x<predicate_list.size()-1;x++)
+    for (long unsigned int x=0;x<predicate_list.size()-1;x++)
     {
         output += predicate_list[x].toString();
         output += ",";

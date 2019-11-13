@@ -8,7 +8,7 @@ void Database::createRelations(vector<Predicate> scheme_list,
     for (auto current_scheme : scheme_list)
     {
         Scheme new_scheme = Scheme();
-        for (int y=0;y<current_scheme.parameter_list.size();y++){
+        for (long unsigned int y=0;y<current_scheme.parameter_list.size();y++){
             new_scheme.push_back(current_scheme.parameter_list[y].toString());
         }
 
@@ -30,7 +30,6 @@ string Database::evaluateQuery(Predicate query)
     string output = "";
     output += query.toString() + "?";
 
-    int match_count = 0;
     for (auto relation_iter=this->begin();relation_iter!=this->end();relation_iter++)
     {
         if (relation_iter->second.name == query.name)
@@ -68,7 +67,7 @@ Relation Database::select(Relation current_relation, vector<Parameter> parameter
     {
         vector<string> rejected_variables;
         bool valid = true;
-        for (int index=0;index<parameter_list.size();index++)
+        for (long unsigned int index=0;index<parameter_list.size();index++)
         {
             string current_variable = parameter_list[index].toString();
             if (current_variable[0] == '\'')
@@ -79,7 +78,7 @@ Relation Database::select(Relation current_relation, vector<Parameter> parameter
             }
             else
             {
-                for (int x=index;x<parameter_list.size() && valid;x++)
+                for (long unsigned int x=index;x<parameter_list.size() && valid;x++)
                 {
                     if (std::find(rejected_variables.begin(), rejected_variables.end(), current_variable) != rejected_variables.end())
                         valid = false;
@@ -116,11 +115,10 @@ Relation Database::project(Relation current_relation, vector<Parameter> paramete
     {
         Tuple new_tuple = Tuple();
         auto scheme_letter = new_relation.scheme.begin();
-        int index = 0;
         while(scheme_letter != new_relation.scheme.end())
         {
             // Get value from tuple
-            for (int tuple_index=0;tuple_index<current_tuple.size();tuple_index++)
+            for (long unsigned int tuple_index=0;tuple_index<current_tuple.size();tuple_index++)
             {
                 if (parameter_list[tuple_index].toString() == *scheme_letter){
                     new_tuple.push_back(current_tuple[tuple_index]);
@@ -136,8 +134,12 @@ Relation Database::project(Relation current_relation, vector<Parameter> paramete
 }
 
 
-Relation Database::rename(Relation current_relation, string new_name, int index)
+Relation Database::rename(Relation current_relation, string old_name, string new_name)
 {
-    current_relation.scheme[index] = new_name;
+    for (long unsigned int x=0;x<current_relation.scheme.size();x++)
+    {
+        if (current_relation.scheme[x] == old_name)
+            current_relation.scheme[x] = new_name;
+    }
     return current_relation;
 }

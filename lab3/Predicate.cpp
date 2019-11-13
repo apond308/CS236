@@ -15,7 +15,7 @@ string Predicate::toString(char terminator)
 {
     string output = "";
     output += name + "(";
-    for (int x=0;x<parameter_list.size()-1;x++)
+    for (long unsigned int x=0;x<parameter_list.size()-1;x++)
     {
         output += parameter_list[x].toString() + ",";
     }
@@ -29,7 +29,7 @@ string Predicate::toString(char terminator)
 Tuple Predicate::getParameters()
 {
     Tuple parameter_strings;
-    for (int x=0;x<parameter_list.size();x++)
+    for (long unsigned int x=0;x<parameter_list.size();x++)
     {
         parameter_strings.push_back(parameter_list[x].toString());
     }
