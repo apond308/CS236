@@ -18,12 +18,17 @@ Relation Relation::join(Relation relation_in)
 {
     Relation joined_relation = Relation(this->name, scheme);
 
+    map<string, tuple<int, int>> duplicates;
     // Join schemes
-    for (auto scheme_name : relation_in.scheme)
+    for (int x=0;x<relation_in.scheme.size();x++)
     {
-        if (std::find(scheme.begin(), scheme.end(), scheme_name) == scheme.end())
+        if (std::find(scheme.begin(), scheme.end(), relation_in.scheme[x]) == scheme.end();)
         {
-            joined_relation.scheme.push_back(scheme_name);
+            joined_relation.scheme.push_back(relation_in.scheme[x]);
+        }
+        else
+        {
+            int index = std::find(scheme.begin(), scheme.end(), relation_in.scheme[x]) - scheme.begin();
         }
     }
     
@@ -35,7 +40,13 @@ Relation Relation::join(Relation relation_in)
         auto b_tuple = relation_in.tuple_list.begin();
         while(b_tuple != relation_in.tuple_list.end())
         {
-            
+            // for (int x=0;x<joined_relation.scheme.size();x++)
+            // {
+
+
+
+
+            // }
             b_tuple++;
         }
         a_tuple++;

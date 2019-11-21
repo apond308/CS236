@@ -55,7 +55,9 @@
 			"numeric": "cpp",
 			"random": "cpp",
 			"map": "cpp",
-			"set": "cpp"
+			"set": "cpp",
+			"bit": "cpp",
+			"cinttypes": "cpp"
 		}
 	}
 }
