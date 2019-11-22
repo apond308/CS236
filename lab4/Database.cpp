@@ -58,10 +58,11 @@ void Database::evaluateQueries(vector<Predicate> query_list)
 
 void Database::evaluateRules(vector<Rule> rule_list)
 {
-    int tuple_count;
+    int tuple_count = 0;
     int prev_tuple_count;
     do
     {
+        prev_tuple_count = tuple_count;
         for (auto current_rule : rule_list)
         {
             vector<Relation> relation_list;
@@ -85,7 +86,13 @@ void Database::evaluateRules(vector<Rule> rule_list)
             cout << endl;
             
         }
-        
+        tuple_count = 0;
+        for (auto current_relation : *this)
+        {
+            for (auto current_tuple : current_relation.second.tuple_list)
+                tuple_count++;
+        }
+        cout << "tuples: c->" << tuple_count << "  p->" << prev_tuple_count << endl;
     }while(tuple_count != prev_tuple_count);
 }
 
