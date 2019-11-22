@@ -58,30 +58,35 @@ void Database::evaluateQueries(vector<Predicate> query_list)
 
 void Database::evaluateRules(vector<Rule> rule_list)
 {
-    for (auto current_rule : rule_list)
+    int tuple_count;
+    int prev_tuple_count;
+    do
     {
-        vector<Relation> relation_list;
-        for (int x=0;x<current_rule.predicate_list.size();x++)
+        for (auto current_rule : rule_list)
         {
-            relation_list.push_back(evaluateQuery(this->find(current_rule.predicate_list[x].name)->second, current_rule.predicate_list[x]));
-                        // relation_list.push_back(evaluateQuery((*this)[current_rule.predicate_list[x].name],current_rule.predicate_list[x]));
+            vector<Relation> relation_list;
+            for (int x=0;x<current_rule.predicate_list.size();x++)
+            {
+                relation_list.push_back(evaluateQuery(this->find(current_rule.predicate_list[x].name)->second, current_rule.predicate_list[x]));
+            }
+
+
+            Relation new_relation = relation_list[0];
+            for (int x=1;x<relation_list.size();x++)
+            {
+                new_relation = new_relation.join(relation_list[x]);
+            }
+
+            new_relation = project(new_relation, current_rule.head_predicate.parameter_list);
+            new_relation.name = current_rule.head_predicate.name;
+
+
+            this->find(new_relation.name)->second = this->find(new_relation.name)->second.unite(new_relation);
+            cout << endl;
+            
         }
-
-
-        Relation new_relation = relation_list[0];
-        for (int x=1;x<relation_list.size();x++)
-        {
-            new_relation = new_relation.join(relation_list[x]);
-        }
-
-        new_relation = project(new_relation, current_rule.head_predicate.parameter_list);
-        new_relation.name = current_rule.head_predicate.name;
-
-
-        this->find(new_relation.name)->second = this->find(new_relation.name)->second.unite(new_relation);
-        cout << endl;
         
-    }
+    }while(tuple_count != prev_tuple_count);
 }
 
 
