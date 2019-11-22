@@ -3,7 +3,7 @@
 #include <algorithm>
 
 void Database::createRelations(vector<Predicate> scheme_list,
-                    vector<Predicate> fact_list, vector<Rule> rule_list)
+                    vector<Predicate> fact_list)
 {
     for (auto current_scheme : scheme_list)
     {
@@ -25,36 +25,62 @@ void Database::createRelations(vector<Predicate> scheme_list,
 }
 
 
-string Database::evaluateQuery(Predicate query)
+Relation Database::evaluateQuery(Relation relation_in, Predicate query)
 {
-    string output = "";
-    output += query.toString() + "?";
-
-    for (auto relation_iter=this->begin();relation_iter!=this->end();relation_iter++)
+    if (relation_in.name == query.name)
     {
-        if (relation_iter->second.name == query.name)
-        {
-            Relation test = relation_iter->second;
-
-            test = select(test, query.parameter_list);
-            test = project(test, query.parameter_list);
-
-            if (test.tuple_list.size() > 0){
-                output += " Yes(" + to_string(test.tuple_list.size()) + ")";
-                output += test.toString();
-            }
-            else
-                output += " No";
-        }
+        relation_in = select(relation_in, query.parameter_list);
+        relation_in = project(relation_in, query.parameter_list);
+        return relation_in;
     }
-        
-    return output;
+    return Relation(relation_in.name, relation_in.scheme);
+    
 }
 
 void Database::evaluateQueries(vector<Predicate> query_list)
 {
     for (auto current_query : query_list){
-        cout << evaluateQuery(current_query) << endl;
+        for (auto current_relation : *this)
+        {
+            Relation new_relation = evaluateQuery(current_relation.second, current_query);
+            cout << current_query.toString() + "?";
+            if (new_relation.tuple_list.size() > 0){
+                cout << " Yes(" + to_string(new_relation.tuple_list.size()) + ")";
+                cout << new_relation.toString();
+            }
+            else
+                cout << " No";
+            cout << endl;
+        }
+    }
+}
+
+
+void Database::evaluateRules(vector<Rule> rule_list)
+{
+    for (auto current_rule : rule_list)
+    {
+        vector<Relation> relation_list;
+        for (int x=0;x<current_rule.predicate_list.size();x++)
+        {
+            relation_list.push_back(evaluateQuery(this->find(current_rule.predicate_list[x].name)->second, current_rule.predicate_list[x]));
+                        // relation_list.push_back(evaluateQuery((*this)[current_rule.predicate_list[x].name],current_rule.predicate_list[x]));
+        }
+
+
+        Relation new_relation = relation_list[0];
+        for (int x=1;x<relation_list.size();x++)
+        {
+            new_relation = new_relation.join(relation_list[x]);
+        }
+
+        new_relation = project(new_relation, current_rule.head_predicate.parameter_list);
+        new_relation.name = current_rule.head_predicate.name;
+
+
+        this->find(new_relation.name)->second = this->find(new_relation.name)->second.unite(new_relation);
+        cout << endl;
+        
     }
 }
 
@@ -105,6 +131,7 @@ Relation Database::project(Relation current_relation, vector<Parameter> paramete
 {
     Relation new_relation = Relation(current_relation.name, Scheme());
 
+    cout << current_relation.toString() << endl;
     for (auto scheme_letter : parameter_list)
     {
         if (scheme_letter.toString()[0] !='\'' && std::find(new_relation.scheme.begin(), new_relation.scheme.end(), scheme_letter.toString()) == new_relation.scheme.end())
@@ -114,19 +141,19 @@ Relation Database::project(Relation current_relation, vector<Parameter> paramete
     for (auto current_tuple : current_relation.tuple_list)
     {
         Tuple new_tuple = Tuple();
-        auto scheme_letter = new_relation.scheme.begin();
-        while(scheme_letter != new_relation.scheme.end())
+         
+        for (int parameter_index=0;parameter_index<parameter_list.size();parameter_index++)
         {
-            // Get value from tuple
-            for (long unsigned int tuple_index=0;tuple_index<current_tuple.size();tuple_index++)
+            for (int scheme_index=0;scheme_index<current_relation.scheme.size();scheme_index++)
             {
-                if (parameter_list[tuple_index].toString() == *scheme_letter){
-                    new_tuple.push_back(current_tuple[tuple_index]);
+                if (tolower(parameter_list[parameter_index].toString()[0]) == tolower(current_relation.scheme[scheme_index][0]))
+                {
+                    new_tuple.push_back(current_tuple[scheme_index]);
                     break;
                 }
             }
-            scheme_letter++;
         }
+
         new_relation.addTuple(new_tuple);
     }
 

@@ -16,7 +16,6 @@ public:
 
     void addPredicate(Predicate new_predicate);
 
-private:
 
     Predicate head_predicate;
 

@@ -15,15 +15,16 @@ class Database : public map<string, Relation>
 public:
 
     void createRelations(vector<Predicate> scheme_list,
-            vector<Predicate> fact_list, vector<Rule> rule_list);
+            vector<Predicate> fact_list);
     void evaluateQueries(vector<Predicate> query_list);
+    void evaluateRules(vector<Rule> rule_list);
 
     Relation select(Relation current_relation, vector<Parameter> parameter_list);
     Relation project(Relation current_relation, vector<Parameter> parameter_list);
     Relation rename(Relation current_relation, string old_name, string new_name);
 
 private:
-    string evaluateQuery(Predicate query);
+    Relation evaluateQuery(Relation relation_in, Predicate query);
 
 };
 

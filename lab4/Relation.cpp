@@ -18,35 +18,58 @@ Relation Relation::join(Relation relation_in)
 {
     Relation joined_relation = Relation(this->name, scheme);
 
-    map<string, tuple<int, int>> duplicates;
+    vector<pair<int, int>> duplicates;
     // Join schemes
     for (int x=0;x<relation_in.scheme.size();x++)
     {
-        if (std::find(scheme.begin(), scheme.end(), relation_in.scheme[x]) == scheme.end();)
+        if (std::find(scheme.begin(), scheme.end(), relation_in.scheme[x]) == scheme.end())
         {
             joined_relation.scheme.push_back(relation_in.scheme[x]);
         }
         else
         {
             int index = std::find(scheme.begin(), scheme.end(), relation_in.scheme[x]) - scheme.begin();
+            duplicates.push_back(pair<int, int>(index, x));
         }
     }
     
 
-    // Join tuples
+    // Find tuples to join
     auto a_tuple = tuple_list.begin();
     while(a_tuple != tuple_list.end())
     {
         auto b_tuple = relation_in.tuple_list.begin();
         while(b_tuple != relation_in.tuple_list.end())
         {
-            // for (int x=0;x<joined_relation.scheme.size();x++)
-            // {
-
-
-
-
-            // }
+            bool valid_join = true;
+            for (auto scheme_pair : duplicates)
+            {
+                if (a_tuple->at(scheme_pair.first) != b_tuple->at(scheme_pair.second))
+                {
+                    valid_join = false;
+                    break;
+                }
+            }
+            if (valid_join)
+            {
+                Tuple new_tuple = Tuple();
+                // Join tuples
+                for (int x=0;x<a_tuple->size();x++)
+                    new_tuple.push_back(a_tuple->at(x));
+                for (int x=0;x<b_tuple->size();x++)
+                {
+                    bool found = false;
+                    for (auto val : duplicates)
+                    {
+                        if (val.second == x)
+                            found = true;
+                    }
+                    if (!found)
+                        new_tuple.push_back(b_tuple->at(x));
+                }
+                joined_relation.addTuple(new_tuple);
+                
+            }
             b_tuple++;
         }
         a_tuple++;
@@ -54,6 +77,20 @@ Relation Relation::join(Relation relation_in)
 
 
     return joined_relation;
+}
+
+Relation Relation::unite(Relation relation_in)
+{
+    Relation united_relation = Relation(this->name, this->scheme);
+
+    for (auto tuple : this->tuple_list)
+        united_relation.addTuple(tuple);
+	
+	for (auto tuple : relation_in.tuple_list)
+		united_relation.addTuple(tuple);
+		
+    return united_relation;
+
 }
 
 string Relation::toString()

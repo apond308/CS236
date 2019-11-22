@@ -4,20 +4,21 @@
 Schemes:
 	alpha(cat,dog,fish)
 
-	beta(cat,fish,bird,bunny)
+	beta(cat,dog,fish)
+
+	answer(cat,dog,fish)
 
 Facts:
-	alpha('1','2','5')
-	alpha('1','4','1')
-	alpha('2','3','2')
-	alpha('3','3','2')
-	alpha('6','7','4')
+	alpha('7','6','5').
+	alpha('8','9','10').
 
-	beta('3','4','2','4')
-	beta('6','4','9','2')
-	beta('4','3','2','7')
-	beta('1','5','2','4')
-	beta('1','5','8','3')
+	beta('1','2','3').
+	beta('1','4','1').
+
+	answer('7','6','5').
+	answer('8','9','10').
+	answer('1','2','3').
+	answer('1','4','1').
 	
 Rules:
 Queries:

@@ -1,0 +1,17 @@
+# For use ONLY during the Fall 2019 semester
+# Copyright Cory Barker, Brigham Young University, August 2019
+
+Schemes:
+	test(S,n,A,P,c,G)
+
+Facts:
+	test('12345','C. Brown','12 Apple St.','555-1234','CS101','A').
+	test('12345','C. Brown','12 Apple St.','555-1234','EE200','B+').
+	test('22222','P. Patty','56 Grape Blvd','555-9999','CS101','B').
+	test('22222','P. Patty','56 Grape Blvd','555-9999','EE200','B').
+	test('33333','Snoopy','12 Apple St.','555-1234','CS101','C').
+
+Rules:
+Queries:
+
+
