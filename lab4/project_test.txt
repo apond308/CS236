@@ -9,7 +9,7 @@ Facts:
 	test('12345','C. Brown','12 Apple St.','555-1234','EE200','B+').
 	test('22222','P. Patty','56 Grape Blvd','555-9999','CS101','B').
 	test('22222','P. Patty','56 Grape Blvd','555-9999','EE200','B').
-	test('33333','Snoopy','12 Apple St.','555-1234','CS101','C').
+	test('CS101','Snoopy','12 Apple St.','555-1234','CS101','C').
 
 Rules:
 Queries:

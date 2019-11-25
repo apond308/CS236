@@ -1,6 +1,8 @@
 #include "Database.h"
 #include <iostream>
 #include <algorithm>
+#include <unordered_map>
+using namespace std;
 
 void Database::createRelations(vector<Predicate> scheme_list,
                     vector<Predicate> fact_list)
@@ -27,13 +29,40 @@ void Database::createRelations(vector<Predicate> scheme_list,
 
 Relation Database::evaluateQuery(Relation relation_in, Predicate query)
 {
-    if (relation_in.name == query.name)
+    Relation new_relation = relation_in;
+
+    map<string, vector<int>> seen;
+    for (int parameter_index=0;parameter_index<query.parameter_list.size();parameter_index++)
     {
-        relation_in = select(relation_in, query.parameter_list);
-        relation_in = project(relation_in, query.parameter_list);
-        return relation_in;
+        if (query.parameter_list[parameter_index].toString()[0] == '\'')
+            new_relation = select1(new_relation, parameter_index, query.parameter_list[parameter_index].toString());
+        else
+        {
+            if (seen.find(query.parameter_list[parameter_index].toString()) == seen.end())
+                // Mark to keep for project and rename
+                seen.insert(pair<string, vector<int>>(query.parameter_list[parameter_index].toString(), vector<int>{parameter_index}));
+            else
+                seen[query.parameter_list[parameter_index].toString()].push_back(parameter_index);
+        }
     }
-    return Relation(relation_in.name, relation_in.scheme);
+
+    set<int> to_project;
+    for (auto see : seen)
+    {
+        to_project.insert(see.second[0]);
+        new_relation = rename(new_relation, see.second[0], see.first);
+    }
+    vector<int> to_project_ordered;
+    for (auto it : to_project)
+    {
+        to_project_ordered.push_back(it);
+    }
+    
+    new_relation = project(new_relation, to_project_ordered);
+    
+    new_relation = new_relation;
+
+    return new_relation;
     
 }
 
@@ -42,15 +71,18 @@ void Database::evaluateQueries(vector<Predicate> query_list)
     for (auto current_query : query_list){
         for (auto current_relation : *this)
         {
-            Relation new_relation = evaluateQuery(current_relation.second, current_query);
-            cout << current_query.toString() + "?";
-            if (new_relation.tuple_list.size() > 0){
-                cout << " Yes(" + to_string(new_relation.tuple_list.size()) + ")";
-                cout << new_relation.toString();
+            if (current_relation.second.name == current_query.name)
+            {
+                Relation new_relation = evaluateQuery(current_relation.second, current_query);
+                cout << current_query.toString() + "?";
+                if (new_relation.tuple_list.size() > 0){
+                    cout << " Yes(" + to_string(new_relation.tuple_list.size()) + ")";
+                    cout << new_relation.toString();
+                }
+                else
+                    cout << " No";
+                cout << endl;
             }
-            else
-                cout << " No";
-            cout << endl;
         }
     }
 }
@@ -58,6 +90,7 @@ void Database::evaluateQueries(vector<Predicate> query_list)
 
 void Database::evaluateRules(vector<Rule> rule_list)
 {
+    int passes_completed = 0;
     int tuple_count = 0;
     int prev_tuple_count;
     do
@@ -78,26 +111,89 @@ void Database::evaluateRules(vector<Rule> rule_list)
                 new_relation = new_relation.join(relation_list[x]);
             }
 
-            new_relation = project(new_relation, current_rule.head_predicate.parameter_list);
+            vector<int> indexes;
+            for (auto param : current_rule.head_predicate.parameter_list)
+            {
+                for (int scheme_index=0;scheme_index<new_relation.scheme.size();scheme_index++)
+                {
+                    if (new_relation.scheme[scheme_index] == param.toString())
+                        indexes.push_back(scheme_index);
+                }
+            }
+
+            new_relation = project(new_relation, indexes);
             new_relation.name = current_rule.head_predicate.name;
 
-
+            cout << current_rule.toString();
             this->find(new_relation.name)->second = this->find(new_relation.name)->second.unite(new_relation);
-            cout << endl;
-            
+
         }
+
         tuple_count = 0;
         for (auto current_relation : *this)
         {
             for (auto current_tuple : current_relation.second.tuple_list)
                 tuple_count++;
         }
-        cout << "tuples: c->" << tuple_count << "  p->" << prev_tuple_count << endl;
+        passes_completed++;
+
     }while(tuple_count != prev_tuple_count);
 }
 
 
-Relation Database::select(Relation current_relation, vector<Parameter> parameter_list)
+Relation Database::select1(Relation relation_in, int index, string parameter)
+{
+    Relation new_relation = Relation(relation_in.name, relation_in.scheme);
+
+    for (auto current_tuple=relation_in.tuple_list.begin();current_tuple!=relation_in.tuple_list.end();current_tuple++)
+    {
+        if (current_tuple->at(index) == parameter)
+            new_relation.addTuple(*current_tuple);
+    }
+    return new_relation;
+}
+
+Relation Database::select2(Relation relation_in, vector<int> indexes)
+{
+    Relation new_relation = Relation(relation_in.name, relation_in.scheme);
+
+    for (auto current_tuple=relation_in.tuple_list.begin();current_tuple!=relation_in.tuple_list.end();current_tuple++)
+    {
+        string value = current_tuple->at(indexes[0]);
+        bool valid = true;
+        for (int x=1;x<indexes.size();x++)
+        {
+            if (current_tuple->at(indexes[x]) != value)
+                valid = false;
+        }
+        if (valid)
+            new_relation.addTuple(*current_tuple);
+    }
+    return new_relation;
+}
+
+Relation Database::project(Relation relation_in, vector<int> names)
+{
+    Relation new_relation = Relation(relation_in.name, Scheme());
+    
+    for (auto scheme_index : names)
+        new_relation.scheme.push_back(relation_in.scheme[scheme_index]);
+    
+    for (auto current_tuple : relation_in.tuple_list)
+    {
+        Tuple new_tuple = Tuple();
+        for (auto scheme_index : names)
+        {
+            new_tuple.push_back(current_tuple[scheme_index]);
+        }
+        new_relation.addTuple(new_tuple);
+    }
+
+    return new_relation;
+}
+
+
+Relation Database::oldselect(Relation current_relation, vector<Parameter> parameter_list)
 {
     Relation new_relation = Relation(current_relation.name, current_relation.scheme);
     
@@ -139,7 +235,7 @@ Relation Database::select(Relation current_relation, vector<Parameter> parameter
 }
 
 
-Relation Database::project(Relation current_relation, vector<Parameter> parameter_list)
+Relation Database::oldproject(Relation current_relation, vector<Parameter> parameter_list)
 {
     Relation new_relation = Relation(current_relation.name, Scheme());
 
@@ -173,12 +269,8 @@ Relation Database::project(Relation current_relation, vector<Parameter> paramete
 }
 
 
-Relation Database::rename(Relation current_relation, string old_name, string new_name)
+Relation Database::rename(Relation current_relation, int index, string new_name)
 {
-    for (long unsigned int x=0;x<current_relation.scheme.size();x++)
-    {
-        if (current_relation.scheme[x] == old_name)
-            current_relation.scheme[x] = new_name;
-    }
+    current_relation.scheme[index] = new_name;
     return current_relation;
 }

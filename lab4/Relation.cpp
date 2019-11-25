@@ -9,9 +9,9 @@ Relation::Relation(string name_in, Scheme scheme_in)
     this->scheme = scheme_in;
 }
 
-void Relation::addTuple(Tuple to_add)
+bool Relation::addTuple(Tuple to_add)
 {
-    tuple_list.insert(to_add);
+    return tuple_list.insert(to_add).second;
 }
 
 Relation Relation::join(Relation relation_in)
@@ -55,14 +55,19 @@ Relation Relation::join(Relation relation_in)
                 Tuple new_tuple = Tuple();
                 // Join tuples
                 for (int x=0;x<a_tuple->size();x++)
+                {
                     new_tuple.push_back(a_tuple->at(x));
+                }
                 for (int x=0;x<b_tuple->size();x++)
                 {
                     bool found = false;
                     for (auto val : duplicates)
                     {
                         if (val.second == x)
+                        {
                             found = true;
+                            break;
+                        }
                     }
                     if (!found)
                         new_tuple.push_back(b_tuple->at(x));
@@ -82,12 +87,18 @@ Relation Relation::join(Relation relation_in)
 Relation Relation::unite(Relation relation_in)
 {
     Relation united_relation = Relation(this->name, this->scheme);
+    Relation to_print = Relation(this->name, this->scheme);
 
     for (auto tuple : this->tuple_list)
         united_relation.addTuple(tuple);
-	
+
 	for (auto tuple : relation_in.tuple_list)
-		united_relation.addTuple(tuple);
+    {
+		bool new_element = united_relation.addTuple(tuple);
+        if (new_element)
+            to_print.addTuple(tuple);
+    }
+    cout << to_print.toString() << endl;
 		
     return united_relation;
 

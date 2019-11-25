@@ -38,17 +38,12 @@ int main(int argc, char* argv[])
 // 	parser.parse();
 
 // 	Database database = Database();
-// 	database.createRelations(parser.getSchemeList(), parser.getFactList(), parser.getRuleList());
+// 	database.createRelations(parser.getSchemeList(), parser.getFactList());
 
-// 	Relation alpha = database.at("alpha");
-// 	Relation beta = database.at("beta");
+// 	Relation parent = database.at("parent");
+// 	Relation ancestor = database.at("ancestor");
 
-// 	Relation check = database.at("answer");
-
-// 	Relation result = alpha.join(beta);
-
-// 	cout << "Expected answer:";
-// 	cout << check.toString() << endl;
+// 	Relation result = parent.join(ancestor);
 
 // 	cout << endl;
 
@@ -73,12 +68,12 @@ int main(int argc, char* argv[])
 // 	Database database = Database();
 // 	database.createRelations(parser.getSchemeList(), parser.getFactList());
 
-// 	Relation alpha = database.at("alpha");
-// 	Relation beta = database.at("beta");
+// 	Relation parent = database.at("parent");
+// 	Relation ancestor = database.at("ancestor");
 
 // 	Relation check = database.at("answer");
 
-// 	Relation result = alpha.unite(beta);
+// 	Relation result = parent.unite(ancestor);
 
 // 	cout << "Expected answer:";
 // 	cout << check.toString() << endl;
@@ -95,7 +90,7 @@ int main(int argc, char* argv[])
 
 // int main(int argc, char* argv[])
 // {
-// 	string filename = "lab4/project_test.txt";
+// 	string filename = "lab4/evaluateQueryTest.txt";
 // 	if (argc > 1)
 // 		filename = argv[1];
 
@@ -104,15 +99,13 @@ int main(int argc, char* argv[])
 // 	Parser parser = Parser(token_list);
 // 	parser.parse();
 
+
 // 	Database database = Database();
 // 	database.createRelations(parser.getSchemeList(), parser.getFactList());
 
-// 	Relation test = database.at("test");
+// 	Relation parent = database.at("parent");
+// 	Relation ancestor = database.at("ancestor");
 
-// 	vector<Parameter> parameter_list;
-// 	parameter_list.push_back(Parameter("c"));
-// 	parameter_list.push_back(Parameter("n"));
-
-// 	database.project(test, parameter_list);
+// 	database.evaluateQueries(parser.getQueryList());
 
 // }

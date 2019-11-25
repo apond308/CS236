@@ -19,11 +19,14 @@ public:
     void evaluateQueries(vector<Predicate> query_list);
     void evaluateRules(vector<Rule> rule_list);
 
-    Relation select(Relation current_relation, vector<Parameter> parameter_list);
-    Relation project(Relation current_relation, vector<Parameter> parameter_list);
-    Relation rename(Relation current_relation, string old_name, string new_name);
+    Relation select1(Relation relation_in, int index, string parameter);
+    Relation select2(Relation relation_in, vector<int> indexes);
+    Relation project(Relation relation_in, vector<int> names);
+    Relation rename(Relation current_relation, int index, string new_name);
 
-private:
+    Relation oldselect(Relation current_relation, vector<Parameter> parameter_list);
+    Relation oldproject(Relation current_relation, vector<Parameter> parameter_list);
+
     Relation evaluateQuery(Relation relation_in, Predicate query);
 
 };

@@ -24,7 +24,7 @@ public:
      */
     Relation(string name_in, Scheme scheme_in);
 
-    void addTuple(Tuple to_add);
+    bool addTuple(Tuple to_add);
 
     Relation join(Relation relation_in);
     Relation unite(Relation relation_in);
