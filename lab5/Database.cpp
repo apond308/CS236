@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <unordered_map>
 #include "Graph.h"
+
 using namespace std;
 
 void Database::createRelations(vector<Predicate> scheme_list,
@@ -95,7 +96,7 @@ void Database::evaluateRules(vector<Rule> rule_list)
     int tuple_count = 0;
     int prev_tuple_count;
 
-    Graph depencency_graph = Graph(rule_list);
+    Graph depencency_graph = Graph::generateDependencyGraph(rule_list);
 
     do
     {

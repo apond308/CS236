@@ -9,9 +9,13 @@ class Graph
 {
 public:
 
-    Graph(vector<Rule> rules_in);
+    Graph(){}
     
-    void generateDependencyGraph();
+    static Graph generateDependencyGraph(vector<Rule> rules_in);
+
+    static Graph generateReverseGraph(vector<Rule> rules_in);
+
+    string toString();
 
     vector<Node> node_list;
 

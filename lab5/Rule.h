@@ -9,7 +9,7 @@ using namespace std;
 class Rule
 {
 public:
-
+    Rule(){}
     Rule(Predicate predicate_in);
 
     std::string toString();

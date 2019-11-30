@@ -7,7 +7,7 @@
             "label": "235 g++ build",
             "type": "shell",
             "command": "g++",
-            "args": ["lab4/*.cpp", "-g", "-o", "run"],
+            "args": ["lab5/*.cpp", "-g", "-o", "run"],
             "options": {
                 "cwd": "${workspaceRoot}"
             }
