@@ -185,7 +185,11 @@ int main(int argc, char* argv[])
 
 	cout << reverse_graph.toString() << endl;
 
+	vector<Node> postorder_list = reverse_graph.getPostOrder();
 
+	vector<vector<Node>> scc_list = normal_graph.getSCCs(postorder_list);
+
+	cout << endl << normal_graph.sccs_toString(scc_list) << endl;
 
 
 	cout << "Done." << endl;

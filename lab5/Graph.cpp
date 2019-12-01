@@ -1,5 +1,7 @@
 #include "Graph.h"
 #include "Node.h"
+#include <stack>
+#include <set>
 #include <iostream>
 
 Graph Graph::generateDependencyGraph(vector<Rule> rules_in)
@@ -60,6 +62,82 @@ Graph Graph::generateReverseGraph(vector<Rule> rules_in)
     new_graph.node_list = node_list;
 
     return new_graph;
+}
+
+void Graph::goDeep(Node current_node)
+{
+    if (visited_list.find(current_node.rule_index) != visited_list.end())
+        return;
+    visited_list.insert(current_node.rule_index);
+    for (auto dependency : current_node.dependencies)
+    {
+        for (auto node=node_list.begin();node!=node_list.end();node++)
+        {
+            if (node->rule_index == dependency)
+            {
+                goDeep(*node);
+            }
+        }
+    }
+    order_list.push_back(current_node);
+}
+
+vector<Node> Graph::getPostOrder()
+{
+    vector<Node>::iterator current_node = node_list.begin();
+
+    order_list.clear();
+    visited_list.clear();
+
+    while(current_node != node_list.end())
+    {
+        goDeep(*current_node);
+        current_node++;
+    }
+
+    return order_list;
+}
+
+vector<vector<Node>> Graph::getSCCs(vector<Node> postorder_list)
+{
+    visited_list.clear();
+    
+    for(int post_index = postorder_list.size()-1;post_index >= 0;post_index--)
+    {
+        auto node = getNodeWithIndex(postorder_list[post_index].rule_index);
+        goDeep(node);
+        if (order_list.size() > 0){
+            scc_list.push_back(order_list);
+            order_list.clear();
+        }
+    }
+    return scc_list;
+}
+
+Node Graph::getNodeWithIndex(int index)
+{
+    for (auto node : node_list)
+    {
+        if (node.rule_index == index)
+            return node;
+    }
+}
+
+string Graph::sccs_toString(vector<vector<Node>> scc_list)
+{
+    string output_string = "";
+    for (auto index=0;index<scc_list.size();index++)
+    {
+        output_string += "SCC" + to_string(index) + ": ";
+        for (int x=(int)scc_list[index].size()-1;x>=0;x--)
+        {
+            output_string += "R" + to_string(scc_list[index][x].rule_index);
+            if (x != 0)
+                output_string += ",";
+        }
+        output_string += "\n";
+    }
+    return output_string;
 }
 
 string Graph::toString()
