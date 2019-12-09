@@ -178,17 +178,23 @@ int main(int argc, char* argv[])
 
 // 	Graph normal_graph = Graph::generateDependencyGraph(rule_list);
 
-// 	cout << normal_graph.toString() << endl << endl;
+// 	cout << "\n################ Dependency Graph ################" << endl;
+// 	cout << "\nExpected:\n" << "R0:R1,R2\nR1:R0,R2\nR2:R3,R4\nR3:R2\nR4:\n";
+// 	cout << "\nActual:\n" << normal_graph.toString() << endl;
 
 	
 // 	Graph reverse_graph = Graph::generateReverseGraph(rule_list);
 
-// 	cout << reverse_graph.toString() << endl;
+// 	cout << "\n################ Reverse Graph ################" << endl;
+// 	cout << "\nExpected:\n" << "R0:R1\nR1:R0\nR2:R0,R1,R3\nR3:R2\nR4:R2\n";
+// 	cout << "\nActual:\n" << reverse_graph.toString() << endl;
+
 
 // 	vector<Node> postorder_list = reverse_graph.getPostOrder();
-
 // 	vector<vector<Node>> scc_list = normal_graph.getSCCs(postorder_list);
 
-// 	cout << endl << normal_graph.sccs_toString(scc_list) << endl;
+// 	cout << "\n################ SCCs ################" << endl;
+// 	cout << "\nExpected:\n" << "R4\nR2,R3\nR0,R1\n";
+// 	cout << "\nActual:\n" << normal_graph.sccs_toString(scc_list) << endl;
 
 // }

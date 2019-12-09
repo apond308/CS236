@@ -34,7 +34,7 @@ Relation Database::evaluateQuery(Relation relation_in, Predicate query)
     Relation new_relation = relation_in;
 
     map<string, vector<int>> seen;
-    for (int parameter_index=0;parameter_index<query.parameter_list.size();parameter_index++)
+    for (int parameter_index=0;parameter_index<(int)query.parameter_list.size();parameter_index++)
     {
         if (query.parameter_list[parameter_index].toString()[0] == '\'')
             new_relation = select1(new_relation, parameter_index, query.parameter_list[parameter_index].toString());
@@ -92,14 +92,14 @@ void Database::evaluateQueries(vector<Predicate> query_list)
 void Database::evaluateRule(Rule reference_rule)
 {
     vector<Relation> relation_list;
-    for (int x=0;x<reference_rule.predicate_list.size();x++)
+    for (unsigned x=0;x<reference_rule.predicate_list.size();x++)
     {
         relation_list.push_back(evaluateQuery(this->find(reference_rule.predicate_list[x].name)->second, reference_rule.predicate_list[x]));
     }
 
 
     Relation new_relation = relation_list[0];
-    for (int x=1;x<relation_list.size();x++)
+    for (unsigned x=1;x<relation_list.size();x++)
     {
         new_relation = new_relation.join(relation_list[x]);
     }
@@ -107,7 +107,7 @@ void Database::evaluateRule(Rule reference_rule)
     vector<int> indexes;
     for (auto param : reference_rule.head_predicate.parameter_list)
     {
-        for (int scheme_index=0;scheme_index<new_relation.scheme.size();scheme_index++)
+        for (unsigned scheme_index=0;scheme_index<new_relation.scheme.size();scheme_index++)
         {
             if (new_relation.scheme[scheme_index] == param.toString())
                 indexes.push_back(scheme_index);
@@ -116,8 +116,6 @@ void Database::evaluateRule(Rule reference_rule)
 
     new_relation = project(new_relation, indexes);
     new_relation.name = reference_rule.head_predicate.name;
-
-    int prev_count = this->find(new_relation.name)->second.tuple_list.size();
 
     pair<Relation, Relation> unite_result = this->find(new_relation.name)->second.unite(new_relation);
     this->find(new_relation.name)->second = unite_result.first;
@@ -191,14 +189,14 @@ void Database::evaluateRules_old(vector<Rule> rule_list)
         for (auto current_rule : rule_list)
         {
             vector<Relation> relation_list;
-            for (int x=0;x<current_rule.predicate_list.size();x++)
+            for (unsigned x=0;x<current_rule.predicate_list.size();x++)
             {
                 relation_list.push_back(evaluateQuery(this->find(current_rule.predicate_list[x].name)->second, current_rule.predicate_list[x]));
             }
 
 
             Relation new_relation = relation_list[0];
-            for (int x=1;x<relation_list.size();x++)
+            for (unsigned x=1;x<relation_list.size();x++)
             {
                 new_relation = new_relation.join(relation_list[x]);
             }
@@ -206,7 +204,7 @@ void Database::evaluateRules_old(vector<Rule> rule_list)
             vector<int> indexes;
             for (auto param : current_rule.head_predicate.parameter_list)
             {
-                for (int scheme_index=0;scheme_index<new_relation.scheme.size();scheme_index++)
+                for (unsigned scheme_index=0;scheme_index<new_relation.scheme.size();scheme_index++)
                 {
                     if (new_relation.scheme[scheme_index] == param.toString())
                         indexes.push_back(scheme_index);
@@ -252,7 +250,7 @@ Relation Database::select2(Relation relation_in, vector<int> indexes)
     {
         string value = current_tuple->at(indexes[0]);
         bool valid = true;
-        for (int x=1;x<indexes.size();x++)
+        for (unsigned x=1;x<indexes.size();x++)
         {
             if (current_tuple->at(indexes[x]) != value)
                 valid = false;
@@ -292,7 +290,7 @@ Relation Database::oldselect(Relation current_relation, vector<Parameter> parame
     {
         vector<string> rejected_variables;
         bool valid = true;
-        for (long unsigned int index=0;index<parameter_list.size();index++)
+        for (unsigned index=0;index<parameter_list.size();index++)
         {
             string current_variable = parameter_list[index].toString();
             if (current_variable[0] == '\'')
@@ -341,9 +339,9 @@ Relation Database::oldproject(Relation current_relation, vector<Parameter> param
     {
         Tuple new_tuple = Tuple();
          
-        for (int parameter_index=0;parameter_index<parameter_list.size();parameter_index++)
+        for (unsigned parameter_index=0;parameter_index<parameter_list.size();parameter_index++)
         {
-            for (int scheme_index=0;scheme_index<current_relation.scheme.size();scheme_index++)
+            for (unsigned scheme_index=0;scheme_index<current_relation.scheme.size();scheme_index++)
             {
                 if (tolower(parameter_list[parameter_index].toString()[0]) == tolower(current_relation.scheme[scheme_index][0]))
                 {

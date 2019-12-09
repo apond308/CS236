@@ -1,23 +1,45 @@
 Schemes:
-    f(A,B)
-    g(C,D)
-    r(E,F)
+
+s0(v,w,x,y,z)
+s1(a,b,c,d,e)
+s2(a,b,c,d,e)
+
+s3(a,b,c,d,e,f,g,i)
+
+s4(a,b,c,d,e)
+
+s5(a,b,c,d,e)
+
+
+
 
 Facts:
-    f('1','2').
-    f('4','3').
-    g('3','2').
-    r('1','4').
-    r('2','5').
-    r('3','5').
-    r('4','1').
- 
+
+s0('a','b','c','d','e').
+s2('f','g','h','i','j').
+
 Rules:
-    r(A,B) :- f(A,X),g(B,X).
-    f(C,D) :- r(D,C).
-    g(E,F) :- f(E,X),r(X,F).
+
+s1(a,b,c,d,e) :- s0(a,b,c,d,e).
+
+s1(a,b,c,d,e) :- s2(b,c,d,e,a).
+s2(a,b,c,d,e) :- s1(b,c,d,e,a).
+s1(a,b,c,d,e) :- s1(b,a,c,d,e).
+
+s3(a,f,b,g,c,h,d,i) :- s1(a,b,c,d,e),s2(f,g,h,i,j).
+
+s5(a,b,c,d,e) :- s0(a,b,c,d,e).
+
+s4(a,b,c,d,e) :- s3(a,b,z,y,c,d,e,i),s5(m,n,x,y,z).
+s5(a,a,c,d,e) :- s4(a,b,c,d,e),s5(a,w,x,y,z).
+s5(a,b,c,d,e) :- s5(e,a,b,c,d).
+
 
 Queries:
-    f('3',Z)?
-    r(Y,'3')?
-    f(W,X)?
+
+#scc1o1(a,b,c,d,e)?
+#scc2o1(a,b,c,d,e)?
+#scc1o2(a,b,c,d,e,f,g,h,i,j)?
+#scc1o3(a,b,c,d,e,f)?
+#s3(a,b,c,d,e,,g)?
+s5(a,b,c,d,e)?

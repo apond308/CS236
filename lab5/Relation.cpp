@@ -20,7 +20,7 @@ Relation Relation::join(Relation relation_in)
 
     vector<pair<int, int>> duplicates;
     // Join schemes
-    for (int x=0;x<relation_in.scheme.size();x++)
+    for (unsigned x=0;x<relation_in.scheme.size();x++)
     {
         if (std::find(scheme.begin(), scheme.end(), relation_in.scheme[x]) == scheme.end())
         {
@@ -28,7 +28,7 @@ Relation Relation::join(Relation relation_in)
         }
         else
         {
-            int index = std::find(scheme.begin(), scheme.end(), relation_in.scheme[x]) - scheme.begin();
+            auto index = std::find(scheme.begin(), scheme.end(), relation_in.scheme[x]) - scheme.begin();
             duplicates.push_back(pair<int, int>(index, x));
         }
     }
@@ -54,16 +54,16 @@ Relation Relation::join(Relation relation_in)
             {
                 Tuple new_tuple = Tuple();
                 // Join tuples
-                for (int x=0;x<a_tuple->size();x++)
+                for (unsigned x=0;x<a_tuple->size();x++)
                 {
                     new_tuple.push_back(a_tuple->at(x));
                 }
-                for (int x=0;x<b_tuple->size();x++)
+                for (unsigned x=0;x<b_tuple->size();x++)
                 {
                     bool found = false;
                     for (auto val : duplicates)
                     {
-                        if (val.second == x)
+                        if ((unsigned)val.second == x)
                         {
                             found = true;
                             break;
@@ -90,7 +90,9 @@ pair<Relation, Relation> Relation::unite(Relation relation_in)
     Relation to_print = Relation(this->name, this->scheme);
 
     for (auto tuple : this->tuple_list)
+    {
         united_relation.addTuple(tuple);
+    }
 
 	for (auto tuple : relation_in.tuple_list)
     {
