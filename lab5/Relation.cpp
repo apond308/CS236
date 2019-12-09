@@ -84,7 +84,7 @@ Relation Relation::join(Relation relation_in)
     return joined_relation;
 }
 
-Relation Relation::unite(Relation relation_in)
+pair<Relation, Relation> Relation::unite(Relation relation_in)
 {
     Relation united_relation = Relation(this->name, this->scheme);
     Relation to_print = Relation(this->name, this->scheme);
@@ -98,9 +98,8 @@ Relation Relation::unite(Relation relation_in)
         if (new_element)
             to_print.addTuple(tuple);
     }
-    cout << to_print.toString() << endl;
 		
-    return united_relation;
+    return pair<Relation, Relation>(united_relation, to_print);
 
 }
 
@@ -108,11 +107,12 @@ string Relation::toString()
 {
     string temp_string = "";
     for(set<Tuple>::iterator iter = tuple_list.begin(); iter != tuple_list.end(); iter++){
-        if (scheme.size()) {temp_string += "\n  ";}
+        if (scheme.size()) {temp_string += "  ";}
         for (long unsigned int x=0;x<this->scheme.size();x++){    
             temp_string += this->scheme[x] + "=" + (*iter)[x] + ", ";
         }
         temp_string = temp_string.substr(0, temp_string.size()-2);
+        if (scheme.size()) {temp_string += "\n";}
     }
     return temp_string;
 }

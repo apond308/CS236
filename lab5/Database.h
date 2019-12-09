@@ -17,7 +17,9 @@ public:
     void createRelations(vector<Predicate> scheme_list,
             vector<Predicate> fact_list);
     void evaluateQueries(vector<Predicate> query_list);
+    void evaluateRule(Rule reference_rule);
     void evaluateRules(vector<Rule> rule_list);
+    void evaluateRules_old(vector<Rule> rule_list);
 
     Relation select1(Relation relation_in, int index, string parameter);
     Relation select2(Relation relation_in, vector<int> indexes);

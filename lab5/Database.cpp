@@ -70,6 +70,7 @@ Relation Database::evaluateQuery(Relation relation_in, Predicate query)
 
 void Database::evaluateQueries(vector<Predicate> query_list)
 {
+    cout << "Query Evaluation" << endl;
     for (auto current_query : query_list){
         for (auto current_relation : *this)
         {
@@ -78,19 +79,105 @@ void Database::evaluateQueries(vector<Predicate> query_list)
                 Relation new_relation = evaluateQuery(current_relation.second, current_query);
                 cout << current_query.toString() + "?";
                 if (new_relation.tuple_list.size() > 0){
-                    cout << " Yes(" + to_string(new_relation.tuple_list.size()) + ")";
+                    cout << " Yes(" + to_string(new_relation.tuple_list.size()) + ")" << endl;
                     cout << new_relation.toString();
                 }
                 else
                     cout << " No";
-                cout << endl;
             }
         }
     }
 }
 
+void Database::evaluateRule(Rule reference_rule)
+{
+    vector<Relation> relation_list;
+    for (int x=0;x<reference_rule.predicate_list.size();x++)
+    {
+        relation_list.push_back(evaluateQuery(this->find(reference_rule.predicate_list[x].name)->second, reference_rule.predicate_list[x]));
+    }
+
+
+    Relation new_relation = relation_list[0];
+    for (int x=1;x<relation_list.size();x++)
+    {
+        new_relation = new_relation.join(relation_list[x]);
+    }
+
+    vector<int> indexes;
+    for (auto param : reference_rule.head_predicate.parameter_list)
+    {
+        for (int scheme_index=0;scheme_index<new_relation.scheme.size();scheme_index++)
+        {
+            if (new_relation.scheme[scheme_index] == param.toString())
+                indexes.push_back(scheme_index);
+        }
+    }
+
+    new_relation = project(new_relation, indexes);
+    new_relation.name = reference_rule.head_predicate.name;
+
+    int prev_count = this->find(new_relation.name)->second.tuple_list.size();
+
+    pair<Relation, Relation> unite_result = this->find(new_relation.name)->second.unite(new_relation);
+    this->find(new_relation.name)->second = unite_result.first;
+
+    cout << reference_rule.toString() << endl;
+    if (unite_result.second.tuple_list.size() > 0)
+    {
+        cout << unite_result.second.toString();
+    }
+}
 
 void Database::evaluateRules(vector<Rule> rule_list)
+{
+    Graph normal_graph = Graph::generateDependencyGraph(rule_list);
+    cout << "Dependency Graph" << endl;
+	cout << normal_graph.toString() << endl;
+
+	Graph reverse_graph = Graph::generateReverseGraph(rule_list);
+
+	vector<Node> postorder_list = reverse_graph.getPostOrder();
+
+	vector<vector<Node>> scc_list = normal_graph.getSCCs(postorder_list);
+
+	cout << "Rule Evaluation" << endl;
+
+    for (auto scc : scc_list)
+    {
+        cout << "SCC: " + Graph::scc_toString(scc) << endl;
+        bool once = false;
+        int passes = 0;
+        if (scc.size() == 1 && scc.begin()->dependencies.find(scc.begin()->rule_index) == scc.begin()->dependencies.end())
+        {
+            once = true;
+        }
+        int tuple_count = 0;
+        for (auto tuple : *this)
+        {
+            tuple_count += tuple.second.tuple_list.size();
+        }
+        int prev_tuple_count = tuple_count;
+        do
+        {
+            for (auto node : scc)
+            {
+                evaluateRule(node.reference_rule);
+            }
+            passes++;
+            prev_tuple_count = tuple_count;
+            tuple_count = 0;
+            for (auto relation : *this)
+            {
+                tuple_count += relation.second.tuple_list.size();
+            }
+        } while (!once && tuple_count != prev_tuple_count);
+        cout << passes << " passes: " << Graph::scc_toString(scc) << endl;
+    }
+    cout << endl;
+}
+
+void Database::evaluateRules_old(vector<Rule> rule_list)
 {
     int passes_completed = 0;
     int tuple_count = 0;
@@ -130,8 +217,7 @@ void Database::evaluateRules(vector<Rule> rule_list)
             new_relation.name = current_rule.head_predicate.name;
 
             cout << current_rule.toString();
-            this->find(new_relation.name)->second = this->find(new_relation.name)->second.unite(new_relation);
-
+            // this->find(new_relation.name)->second = this->find(new_relation.name)->second.unite(new_relation);
         }
 
         tuple_count = 0;

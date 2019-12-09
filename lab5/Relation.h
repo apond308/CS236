@@ -27,7 +27,7 @@ public:
     bool addTuple(Tuple to_add);
 
     Relation join(Relation relation_in);
-    Relation unite(Relation relation_in);
+    pair<Relation, Relation> unite(Relation relation_in);
 
     string toString();
     

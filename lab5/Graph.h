@@ -21,7 +21,8 @@ public:
 
     vector<vector<Node>> getSCCs(vector<Node> postorder_list);
 
-    string sccs_toString(vector<vector<Node>> scc_list);
+    static string sccs_toString(vector<vector<Node>> scc_list);
+    static string scc_toString(vector<Node> scc);
 
     string toString();
 

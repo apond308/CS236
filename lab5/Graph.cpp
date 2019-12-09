@@ -3,6 +3,7 @@
 #include <stack>
 #include <set>
 #include <iostream>
+#include <algorithm>
 
 Graph Graph::generateDependencyGraph(vector<Rule> rules_in)
 {
@@ -22,9 +23,10 @@ Graph Graph::generateDependencyGraph(vector<Rule> rules_in)
         {
             for (auto x=0;x<node_list.size();x++)
             {
-                if (node_list[x].reference_rule.head_predicate.name == predicate.name)
+                if (node_list[x].reference_rule.head_predicate.name == predicate.name &&
+                    std::find(node_list[node_index].dependencies.begin(), node_list[node_index].dependencies.end(), x) == node_list[node_index].dependencies.end())
                 {
-                    node_list[node_index].dependencies.push_back(x);
+                    node_list[node_index].dependencies.insert(x);
                 }
             }
         }
@@ -54,13 +56,12 @@ Graph Graph::generateReverseGraph(vector<Rule> rules_in)
             {
                 if (node_list[x].reference_rule.head_predicate.name == predicate.name)
                 {
-                    node_list[x].dependencies.push_back(node_index);
+                    node_list[x].dependencies.insert(node_index);
                 }
             }
         }
     }
     new_graph.node_list = node_list;
-
     return new_graph;
 }
 
@@ -102,11 +103,12 @@ vector<vector<Node>> Graph::getSCCs(vector<Node> postorder_list)
 {
     visited_list.clear();
     
-    for(int post_index = postorder_list.size()-1;post_index >= 0;post_index--)
+    for(int post_index=postorder_list.size()-1;post_index>=0;post_index--)
     {
         auto node = getNodeWithIndex(postorder_list[post_index].rule_index);
         goDeep(node);
         if (order_list.size() > 0){
+            sort(order_list.begin(), order_list.end());
             scc_list.push_back(order_list);
             order_list.clear();
         }
@@ -123,18 +125,24 @@ Node Graph::getNodeWithIndex(int index)
     }
 }
 
+string Graph::scc_toString(vector<Node> scc)
+{
+    string output_string = "";
+    for (int x=0;x<(int)scc.size();x++)
+    {
+        output_string += "R" + to_string(scc[x].rule_index);
+        if (x != (int)scc.size()-1)
+            output_string += ",";
+    }
+    return output_string;
+}
+
 string Graph::sccs_toString(vector<vector<Node>> scc_list)
 {
     string output_string = "";
     for (auto index=0;index<scc_list.size();index++)
     {
-        output_string += "SCC" + to_string(index) + ": ";
-        for (int x=(int)scc_list[index].size()-1;x>=0;x--)
-        {
-            output_string += "R" + to_string(scc_list[index][x].rule_index);
-            if (x != 0)
-                output_string += ",";
-        }
+        output_string += scc_toString(scc_list[index]);
         output_string += "\n";
     }
     return output_string;
@@ -148,12 +156,13 @@ string Graph::toString()
         output_string += "R" + to_string(node.rule_index) + ":";
         if (node.dependencies.size() > 0)
         {
-            for (auto x=0;x<node.dependencies.size();x++)
+            for (auto dependency : node.dependencies)
             {
-                output_string += " R" + to_string(node_list[node.dependencies[x]].rule_index) + ",";
+                output_string += "R" + to_string(node_list[dependency].rule_index) + ",";
             }
-            output_string[output_string.size()-1] = '\n';
+            output_string.pop_back();
         }
+        output_string += "\n";
     }
     return output_string;
 }
